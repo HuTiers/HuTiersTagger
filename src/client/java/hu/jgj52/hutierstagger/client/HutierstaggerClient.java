@@ -4,6 +4,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.command.CommandSource;
 import net.minecraft.item.ItemStack;
@@ -19,27 +20,19 @@ import java.util.Set;
 
 public class HutierstaggerClient implements ClientModInitializer {
 
-    private String gamemode;
-    private static boolean enabled;
+    public static String gamemode = "Vanilla";
+    private static boolean enabled = true;
+    public static boolean inited = false;
 
     private static HutierstaggerClient instance;
 
     private static final HttpClient client = HttpClient.newHttpClient();
 
-    public static final hu.jgj52.hutierstagger.client.Config config = hu.jgj52.hutierstagger.client.Config.createAndLoad();
-
     @Override
     public void onInitializeClient() {
         instance = this;
-        gamemode = config.gamemode().name();
-        enabled = config.enabled();
-        config.subscribeToGamemode(gamemode -> {
-            this.gamemode = gamemode.name();
-            PlayerPrefixManager.resetMap();
-        });
         WebSocketManager webSocketManager = new WebSocketManager();
         webSocketManager.conncect("wss://api.hutiers.hu/");
-        config.subscribeToEnabled(enabled -> HutierstaggerClient.enabled = enabled);
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher.register(ClientCommandManager.literal("getgamemodekit")
                 .then(ClientCommandManager.argument("mode", StringArgumentType.word())
                         .suggests((context, builder) -> CommandSource.suggestMatching(Set.of("Vanilla", "UHC", "Pot", "NethPot", "SMP", "Sword", "Axe", "Mace", "Cart", "Creeper", "DiaSMP", "OGVanilla", "ShieldlessUHC"), builder))
@@ -101,6 +94,17 @@ public class HutierstaggerClient implements ClientModInitializer {
                 )
         ));
 
+    }
+
+    public static void sub() {
+        Config.gamemode.onInit(() -> gamemode = ((Enum<?>) Config.gamemode.getValue()).name());
+        Config.enabled.onInit(() -> enabled = (boolean) Config.gamemode.getValue());
+        Config.gamemode.subscribe(gamemode -> {
+            HutierstaggerClient.gamemode = ((Enum<?>) gamemode).name();
+            PlayerPrefixManager.resetMap();
+        });
+        Config.enabled.subscribe(enabled -> HutierstaggerClient.enabled = (boolean) enabled);
+        inited = true;
     }
 
     public String getGamemode() {

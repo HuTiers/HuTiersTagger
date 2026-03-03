@@ -1,5 +1,6 @@
 package hu.jgj52.hutierstagger.mixin;
 
+import hu.jgj52.hutierstagger.client.Config;
 import hu.jgj52.hutierstagger.client.HutierstaggerClient;
 import hu.jgj52.hutierstagger.client.PlayerPrefixManager;
 import net.minecraft.entity.player.PlayerEntity;
@@ -54,7 +55,7 @@ public abstract class PlayerEntityMixin {
                 default -> "ffffff";
             };
 
-            String icon = switch (PlayerPrefixManager.getNowGamemode(id).isEmpty() ? HutierstaggerClient.config.gamemode().name() : PlayerPrefixManager.getNowGamemode(id)) {
+            String icon = switch (PlayerPrefixManager.getNowGamemode(id).isEmpty() ? HutierstaggerClient.gamemode : PlayerPrefixManager.getNowGamemode(id)) {
                 case "Vanilla" -> "";
                 case "UHC" -> "";
                 case "Pot" -> "";

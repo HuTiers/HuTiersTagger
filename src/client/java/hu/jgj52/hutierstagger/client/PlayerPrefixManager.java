@@ -22,6 +22,7 @@ public class PlayerPrefixManager {
     private static final ConcurrentHashMap<UUID, String> nowGamemode = new ConcurrentHashMap<>();
 
     public static void fetchPlayer(UUID player) {
+        if (!HutierstaggerClient.inited) return;
         new Thread(() -> {
             try {
                 prefixMap.putIfAbsent(player, "");
@@ -37,7 +38,7 @@ public class PlayerPrefixManager {
                     JsonObject prefixObj = arr.get(0).getAsJsonObject();
                     JsonObject retiredObj = arr.get(1).getAsJsonObject();
 
-                    String gamemodeKey = HutierstaggerClient.getInstance().getGamemode();
+                    String gamemodeKey = HutierstaggerClient.gamemode;
                     String gamemode = "";
 
                     if (prefixObj.has(gamemodeKey) && !prefixObj.get(gamemodeKey).getAsString().isEmpty()) {

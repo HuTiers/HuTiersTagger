@@ -18,6 +18,9 @@
     ],
     "main": [
       "hu.jgj52.hutierstagger.Hutierstagger"
+    ],
+    "radon": [
+      "hu.jgj52.hutierstagger.client.Config"
     ]
   },
   "mixins": [
@@ -31,7 +34,7 @@
     "fabricloader": ">=${loader_version}",
     "fabric": "*",
     "minecraft": "${minecraft_support_version}",
-    "owo": "*",
+    "radon": "*",
     "modmenu": "*"
   }
 }
